@@ -18,8 +18,17 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\-=+GAME+=-\cpp Libraries\OpenGL\include\glad\glad.c">
+    <ClCompile Include="..\..\..\..\..\..\..\- my folder -\cpp libraries\OpenGL\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader.frag" />
+    <None Include="Shader.vert" />
   </ItemGroup>
 </Project>
