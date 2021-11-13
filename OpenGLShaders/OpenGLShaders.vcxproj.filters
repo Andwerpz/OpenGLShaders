@@ -33,5 +33,6 @@
   <ItemGroup>
     <None Include="Shader.frag" />
     <None Include="Shader.vert" />
+    <None Include="ShaderLight.frag" />
   </ItemGroup>
 </Project>

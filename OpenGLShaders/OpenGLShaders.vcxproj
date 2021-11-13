@@ -182,6 +182,7 @@
   <ItemGroup>
     <None Include="Shader.frag" />
     <None Include="Shader.vert" />
+    <None Include="ShaderLight.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
