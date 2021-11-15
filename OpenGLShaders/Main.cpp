@@ -254,8 +254,11 @@ int main()
 
 	//--setting up textures--
 
-	unsigned int diffuseMap = loadTexture(std::string("C:\\My Folder\\Github\\OpenGLShaders\\OpenGLShaders\\res\\container2.png").c_str());
-	unsigned int specularMap = loadTexture(std::string("C:\\My Folder\\Github\\OpenGLShaders\\OpenGLShaders\\res\\container2_specular.png").c_str());
+	std::filesystem::path path = std::filesystem::current_path();
+	std::string path_string(path.string());
+
+	unsigned int diffuseMap = loadTexture(std::string(path_string + "\\res\\container2.png").c_str());
+	unsigned int specularMap = loadTexture(std::string(path_string + "\\res\\container2_specular.png").c_str());
 
 	//WIREFRAME MODE:
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -335,7 +338,11 @@ int main()
 		ourShader.setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		ourShader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 		ourShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		ourShader.setVec3("light.position", lightPos);
+
+		ourShader.setVec3("light.position", cameraPos);
+		ourShader.setVec3("light.direction", cameraFront);
+		ourShader.setFloat("light.cutoff", glm::cos(glm::radians(12.5f)));
+		ourShader.setFloat("light.outerCutoff", glm::cos(glm::radians(17.5f)));
 
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++)
