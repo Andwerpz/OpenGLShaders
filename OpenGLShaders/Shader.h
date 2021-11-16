@@ -103,6 +103,11 @@ public:
         //location, count, value
     }
 
+    void setVec3(const std::string& name, float a, float b, float c) {
+        int loc = glGetUniformLocation(ID, name.c_str());
+        glUniform3fv(loc, 1, glm::value_ptr(glm::vec3(a, b, c)));
+    }
+
 private:
     // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------
