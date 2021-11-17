@@ -4,8 +4,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "Model.h"
 #include "Shader.h"
+
 #include <iostream>
 #include <filesystem>
 #include <string>
@@ -75,9 +76,9 @@ glm::vec3 cubePositions[] = {
 
 glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
+		glm::vec3(1.7f,  0.6f,  4.0f),
+		glm::vec3(-0.7f,  -0.2f,  -2.0f),
+		glm::vec3(-0.9f,  1.3f,  5.0f),
 };
 
 //light settings
@@ -259,17 +260,17 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//--setting up textures--
-
+	//--loading models--
 	std::filesystem::path path = std::filesystem::current_path();
 	std::string path_string(path.string());
+	stbi_set_flip_vertically_on_load(true);	//flip textures vertically before loading model
+	Model backpack(path_string + "\\res\\backpack\\backpack.obj");
 
-	unsigned int diffuseMap = loadTexture(std::string(path_string + "\\res\\container2.png").c_str());
-	unsigned int specularMap = loadTexture(std::string(path_string + "\\res\\container2_specular.png").c_str());
+	//setting up textures
+	//unsigned int diffuseMap = loadTexture(std::string(path_string + "\\res\\backpack\\diffuse.jpg").c_str());
+	//unsigned int specularMap = loadTexture(std::string(path_string + "\\res\\backpack\\specular.jpg").c_str());
 
-	ourShader.use();
-	ourShader.setInt("material.diffuse", 0);
-	ourShader.setInt("material.specular", 1);
+	
 
 	//WIREFRAME MODE:
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -328,7 +329,7 @@ int main()
 
 		//--rendering --
 		
-
+		//initializing object shader
 		ourShader.use();	
 		ourShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		ourShader.setVec3("viewPos", cameraPos);
@@ -336,18 +337,12 @@ int main()
 		ourShader.setMat4("projection", projection);
 
 		ourShader.setFloat("material.shininess", 32.0);
-		
 
-		// directional light
-		ourShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		ourShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-
-		ourShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-		ourShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+		//point light
+		ourShader.setVec3( "pointLights[0].position", pointLightPositions[0]);
+		ourShader.setVec3( "pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+		ourShader.setVec3( "pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+		ourShader.setVec3( "pointLights[0].specular", 1.0f, 1.0f, 1.0f);
 		ourShader.setFloat("pointLights[0].constant", 1.0f);
 		ourShader.setFloat("pointLights[0].linear", 0.09);
 		ourShader.setFloat("pointLights[0].quadratic", 0.032);
@@ -376,6 +371,7 @@ int main()
 		ourShader.setFloat("pointLights[3].linear", 0.09);
 		ourShader.setFloat("pointLights[3].quadratic", 0.032);
 
+		//flashlight
 		ourShader.setVec3("spotLight.position", cameraPos);
 		ourShader.setVec3("spotLight.direction", cameraFront);
 		ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -384,15 +380,26 @@ int main()
 		ourShader.setFloat("spotLight.constant", 1.0f);
 		ourShader.setFloat("spotLight.linear", 0.09);
 		ourShader.setFloat("spotLight.quadratic", 0.032);
-		ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-		ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+		ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(0.0f)));
+		ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(0.0f)));	
 
 		//binding textures
+		/*
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
+		*/
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat4("model", model);
 
+		backpack.Draw(ourShader);
+
+		//drawing cubes
+		/*
+		ourShader.use();
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -405,6 +412,7 @@ int main()
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		*/
 
 		//drawing light sources
 
