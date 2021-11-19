@@ -40,6 +40,7 @@
     <None Include="Shader.frag" />
     <None Include="Shader.vert" />
     <None Include="ShaderLight.frag" />
+    <None Include="ShaderSingleColor.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\awesomeface.png">

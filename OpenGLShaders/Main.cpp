@@ -16,69 +16,9 @@
 #define GetCurrentDir _getcwd
 #endif
 
-float vertices[] = {
-	// positions          // normals           // texture coords
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
-
-glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
 glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(1.7f,  0.6f,  4.0f),
 		glm::vec3(-0.7f,  -0.2f,  -2.0f),
-		glm::vec3(-0.9f,  1.3f,  5.0f),
 };
 
 //light settings
@@ -159,43 +99,6 @@ void processInput(GLFWwindow* window)
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
-unsigned int loadTexture(char const* path)
-{
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	int width, height, nrComponents;
-	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
-
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
-		stbi_image_free(data);
-	}
-
-	return textureID;
-}
-
 int main()
 {
 	glfwInit();
@@ -225,51 +128,15 @@ int main()
 
 	//--setting up shaders--
 	Shader ourShader("Shader.vert", "Shader.frag");
-	Shader lightShader("Shader.vert", "ShaderLight.frag");
-
-	//--setting up vertices--
-	
-
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	Shader lightShader("Shader.vert", "ShaderLight.frag");	//to draw the light sources
+	Shader singleColorShader("Shader.vert", "ShaderSingleColor.frag");	//for outlining
 
 	//--loading models--
 	std::filesystem::path path = std::filesystem::current_path();
 	std::string path_string(path.string());
 	stbi_set_flip_vertically_on_load(true);	//flip textures vertically before loading model
 	Model backpack(path_string + "\\res\\backpack\\backpack.obj");
-
-	//setting up textures
-	//unsigned int diffuseMap = loadTexture(std::string(path_string + "\\res\\backpack\\diffuse.jpg").c_str());
-	//unsigned int specularMap = loadTexture(std::string(path_string + "\\res\\backpack\\specular.jpg").c_str());
-
+	Model light_bulb(path_string + "\\res\\light_bulb\\light_bulb.obj");
 	
 
 	//WIREFRAME MODE:
@@ -277,6 +144,7 @@ int main()
 
 	//--glfw toggle settings--
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -290,6 +158,7 @@ int main()
 	int counter = 0;
 	int frames = 0;
 	double curSecond = 0;
+	float outlineThickness = 0.1f;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -309,9 +178,14 @@ int main()
 		lastFrame = currentFrame;
 		processInput(window);
 
-		//--clearing the color buffer--
+		//--dealing with buffers--
+		//clearing buffers
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);	//rgba
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//dealing with stencil buffer
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); 
+		glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should pass the stencil test
+		glStencilMask(0xFF); // enable writing to the stencil buffer
 
 		//--setting up transformation matrices--
 		//we have to do these every frame, since these might change
@@ -331,6 +205,7 @@ int main()
 		
 		//initializing object shader
 		ourShader.use();	
+
 		ourShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		ourShader.setVec3("viewPos", cameraPos);
 		ourShader.setMat4("view", view);
@@ -355,22 +230,6 @@ int main()
 		ourShader.setFloat("pointLights[1].linear", 0.09);
 		ourShader.setFloat("pointLights[1].quadratic", 0.032);
 
-		ourShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-		ourShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-		ourShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-		ourShader.setFloat("pointLights[2].constant", 1.0f);
-		ourShader.setFloat("pointLights[2].linear", 0.09);
-		ourShader.setFloat("pointLights[2].quadratic", 0.032);
-
-		ourShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-		ourShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-		ourShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-		ourShader.setFloat("pointLights[3].constant", 1.0f);
-		ourShader.setFloat("pointLights[3].linear", 0.09);
-		ourShader.setFloat("pointLights[3].quadratic", 0.032);
-
 		//flashlight
 		ourShader.setVec3("spotLight.position", cameraPos);
 		ourShader.setVec3("spotLight.direction", cameraFront);
@@ -383,37 +242,34 @@ int main()
 		ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(0.0f)));
 		ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(0.0f)));	
 
-		//binding textures
-		/*
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
-		*/
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
 
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);	//set the stencil color to 1
+		glStencilMask(0xFF);
 		backpack.Draw(ourShader);
 
-		//drawing cubes
-		/*
-		ourShader.use();
-		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(world, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			
-			ourShader.setMat4("model", model);
+		//drawing outline
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);	//setting so that it will only draw where the previous backpack hasn't been drawn
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+		singleColorShader.use();
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		*/
+		singleColorShader.setVec3("viewPos", cameraPos);
+		singleColorShader.setMat4("view", view);
+		singleColorShader.setMat4("projection", projection);
+		singleColorShader.setMat4("model", model);
 
+		singleColorShader.setFloat("scale", outlineThickness);
+
+		backpack.Draw(singleColorShader);
+
+		glStencilMask(0xFF);	//resetting stencil settings for future draw commands
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+		
 		//drawing light sources
 
 		lightShader.use();
@@ -421,16 +277,13 @@ int main()
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("projection", projection);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 2; i++) {
 			model = glm::mat4(1.0);
 			model = glm::translate(world, pointLightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.2f));
 			
-
 			lightShader.setMat4("model", model);
 
-			glBindVertexArray(lightVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			light_bulb.Draw(lightShader);
 		}
 
 		//--swap buffers--
