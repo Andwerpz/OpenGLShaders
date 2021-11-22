@@ -182,16 +182,33 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\backpack\backpack.mtl" />
     <None Include="Shader.frag" />
     <None Include="Shader.vert" />
     <None Include="ShaderLight.frag" />
+    <None Include="ShaderLight.vert" />
     <None Include="ShaderSingleColor.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\awesomeface.png" />
+    <Image Include="res\backpack\ao.jpg" />
+    <Image Include="res\backpack\diffuse.jpg" />
+    <Image Include="res\backpack\normal.png" />
+    <Image Include="res\backpack\roughness.jpg" />
+    <Image Include="res\backpack\specular.jpg" />
     <Image Include="res\brickwall.jpg" />
+    <Image Include="res\brickwall_normal.jpg" />
     <Image Include="res\container2.png" />
     <Image Include="res\container2_specular.png" />
+    <Image Include="res\grass_diffuse.jpg" />
+    <Image Include="res\grass_normal.jpg" />
+    <Image Include="res\sand_diffuse.jpg" />
+    <Image Include="res\sand_normal.jpg" />
+    <Image Include="res\snow_diffuse.jpg" />
+    <Image Include="res\snow_normal.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\backpack\source_attribution.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,6 +41,8 @@
     <None Include="Shader.vert" />
     <None Include="ShaderLight.frag" />
     <None Include="ShaderSingleColor.frag" />
+    <None Include="res\backpack\backpack.mtl" />
+    <None Include="ShaderLight.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\awesomeface.png">
@@ -55,5 +57,44 @@
     <Image Include="res\container2_specular.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\backpack\ao.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\backpack\diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\backpack\normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\backpack\roughness.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\backpack\specular.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\brickwall_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\snow_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\grass_diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\grass_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\snow_diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sand_diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sand_normal.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\backpack\source_attribution.txt" />
   </ItemGroup>
 </Project>

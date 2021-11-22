@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Model.h"
 #include "Shader.h"
+#include <assimp/Importer.hpp>
 
 #include <iostream>
 #include <filesystem>
@@ -16,13 +17,30 @@
 #define GetCurrentDir _getcwd
 #endif
 
-glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(-0.7f,  -0.2f,  -2.0f),
+float vertices[] = {
+	 //vertices			  //normals            //textures
+	 1.0,   1.0,   0.0,   0.0,   0.0,  -1.0,   1.0,   1.0,
+	 1.0,  -1.0,   0.0,   0.0,   0.0,  -1.0,   1.0,   0.0,
+    -1.0,  -1.0,   0.0,   0.0,   0.0,  -1.0,   0.0,   0.0,
+    -1.0,   1.0,   0.0,   0.0,   0.0,  -1.0,   0.0,   1.0
 };
 
+int tris[] = {
+	0, 1, 2,
+	0, 2, 3
+};
+
+glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  0.5f),
+		glm::vec3(-0.7f,  -2.2f,  -0.5f),
+};
+
+//getting current path
+std::filesystem::path path = std::filesystem::current_path();
+std::string path_string(path.string());
+
 //light settings
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 //--camera controls--
@@ -36,7 +54,13 @@ float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 float lastX = 400, lastY = 300;
 
+int SCR_WIDTH = 1920;
+int SCR_HEIGHT = 1080;
+
 bool firstMouse = true;	//just so that the camera doesn't jerk around when first entering the window
+
+GLuint loadTexture(string path);
+void renderQuad();
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -128,15 +152,48 @@ int main()
 
 	//--setting up shaders--
 	Shader ourShader("Shader.vert", "Shader.frag");
-	Shader lightShader("Shader.vert", "ShaderLight.frag");	//to draw the light sources
+	Shader lightShader("ShaderLight.vert", "ShaderLight.frag");	//to draw the light sources
 	Shader singleColorShader("Shader.vert", "ShaderSingleColor.frag");	//for outlining
+	
 
 	//--loading models--
-	std::filesystem::path path = std::filesystem::current_path();
-	std::string path_string(path.string());
 	stbi_set_flip_vertically_on_load(true);	//flip textures vertically before loading model
-	Model backpack(path_string + "\\res\\backpack\\backpack.obj");
-	Model light_bulb(path_string + "\\res\\light_bulb\\light_bulb.obj");
+	//Model backpack(path_string + "\\res\\backpack\\backpack.obj");
+	//Model light_bulb(path_string + "\\res\\light_bulb\\light_bulb.obj");
+
+	GLuint diffuse = loadTexture("\\res\\grass_diffuse.jpg");
+	GLuint normal = loadTexture("\\res\\grass_normal.jpg");
+	GLuint roughness = loadTexture("\\res\\grass_roughness.jpg");
+
+	ourShader.use();
+	ourShader.setInt("diffuseMap", 0);
+	ourShader.setInt("normalMap", 1);
+	ourShader.setInt("roughnessMap", 2);
+
+
+	//--setting up vertices
+	unsigned int VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tris), tris, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	// texture coord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	
 
 	//WIREFRAME MODE:
@@ -202,73 +259,22 @@ int main()
 		projection = glm::perspective(glm::radians(fov), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
 		//--rendering --
-		
-		//initializing object shader
-		ourShader.use();	
-
-		ourShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		ourShader.setVec3("viewPos", cameraPos);
-		ourShader.setMat4("view", view);
+		ourShader.use();
 		ourShader.setMat4("projection", projection);
-
-		ourShader.setFloat("material.shininess", 32.0);
-
-		//point light
-		ourShader.setVec3( "pointLights[0].position", pointLightPositions[0]);
-		ourShader.setVec3( "pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3( "pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		ourShader.setVec3( "pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-		ourShader.setFloat("pointLights[0].constant", 1.0f);
-		ourShader.setFloat("pointLights[0].linear", 0.09);
-		ourShader.setFloat("pointLights[0].quadratic", 0.032);
-
-		ourShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-		ourShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-		ourShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-		ourShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-		ourShader.setFloat("pointLights[1].constant", 1.0f);
-		ourShader.setFloat("pointLights[1].linear", 0.09);
-		ourShader.setFloat("pointLights[1].quadratic", 0.032);
-
-		//flashlight
-		ourShader.setVec3("spotLight.position", cameraPos);
-		ourShader.setVec3("spotLight.direction", cameraFront);
-		ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		ourShader.setFloat("spotLight.constant", 1.0f);
-		ourShader.setFloat("spotLight.linear", 0.09);
-		ourShader.setFloat("spotLight.quadratic", 0.032);
-		ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(0.0f)));
-		ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(0.0f)));	
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat4("view", view);
+		// render normal-mapped quad
+		model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
 		ourShader.setMat4("model", model);
-
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);	//set the stencil color to 1
-		glStencilMask(0xFF);
-		backpack.Draw(ourShader);
-
-		//drawing outline
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);	//setting so that it will only draw where the previous backpack hasn't been drawn
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
-		singleColorShader.use();
-
-		singleColorShader.setVec3("viewPos", cameraPos);
-		singleColorShader.setMat4("view", view);
-		singleColorShader.setMat4("projection", projection);
-		singleColorShader.setMat4("model", model);
-
-		singleColorShader.setFloat("scale", outlineThickness);
-
-		backpack.Draw(singleColorShader);
-
-		glStencilMask(0xFF);	//resetting stencil settings for future draw commands
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		glEnable(GL_DEPTH_TEST);
+		ourShader.setVec3("viewPos", cameraPos);
+		ourShader.setVec3("lightPos", lightPos);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuse);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, normal);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, roughness);
+		renderQuad();
+		
 		
 		//drawing light sources
 
@@ -277,13 +283,18 @@ int main()
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("projection", projection);
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 1; i++) {
 			model = glm::mat4(1.0);
-			model = glm::translate(world, pointLightPositions[i]);
+			
+			model = glm::translate(model, lightPos);
+			model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
 			
 			lightShader.setMat4("model", model);
 
-			light_bulb.Draw(lightShader);
+			//light_bulb.Draw(lightShader);
+
+			glBindVertexArray(VAO);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
 
 		//--swap buffers--
@@ -295,5 +306,122 @@ int main()
 	return 0;
 }
 
+//loads texture, and returns the int associated with that texture
+GLuint loadTexture(string path) {
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load((path_string + path).c_str(), &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	return texture;
+}
 
+// renders a 1x1 quad in NDC with manually calculated tangent vectors
+// ------------------------------------------------------------------
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		// positions
+		glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
+		glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+		glm::vec3 pos3(1.0f, -1.0f, 0.0f);
+		glm::vec3 pos4(1.0f, 1.0f, 0.0f);
+		// texture coordinates
+		glm::vec2 uv1(0.0f, 1.0f);
+		glm::vec2 uv2(0.0f, 0.0f);
+		glm::vec2 uv3(1.0f, 0.0f);
+		glm::vec2 uv4(1.0f, 1.0f);
+		// normal vector
+		glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+		// calculate tangent/bitangent vectors of both triangles
+		glm::vec3 tangent1, bitangent1;
+		glm::vec3 tangent2, bitangent2;
+		// triangle 1
+		// ----------
+		glm::vec3 edge1 = pos2 - pos1;
+		glm::vec3 edge2 = pos3 - pos1;
+		glm::vec2 deltaUV1 = uv2 - uv1;
+		glm::vec2 deltaUV2 = uv3 - uv1;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+		bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+		// triangle 2
+		// ----------
+		edge1 = pos3 - pos1;
+		edge2 = pos4 - pos1;
+		deltaUV1 = uv3 - uv1;
+		deltaUV2 = uv4 - uv1;
+
+		f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+
+		bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+
+		float quadVertices[] = {
+			// positions            // normal         // texcoords  // tangent                          // bitangent
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+			pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+			pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
+		};
+		// configure plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+}
 
